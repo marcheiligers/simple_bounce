@@ -52,6 +52,7 @@ end
 # 2. Tick :
 ################################################################################
 def tick(args)
+  args.state.setup_done = false if args.keyboard.key_down.r
   # 2.1 Setup :
   setup(args) unless args.state.setup_done
 
@@ -59,6 +60,9 @@ def tick(args)
   # 2.2 User Input :
   x             = args.inputs.mouse.x
   y             = args.inputs.mouse.y
+
+  args.state.center = [x, y] if args.inputs.mouse.click
+
 
   # Create a STATIC VECTOR that can collide with SHAPES :
   # (it's a simple vector between the center of the screen ...

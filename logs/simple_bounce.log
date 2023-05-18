@@ -1,0 +1,189 @@
+* 000000 [Engine] Log started at 2023/5/17 17:54:51
+* 000000 [Engine] This copy of the engine is git hash 85a12ae4d8ca2f1d15afa88dbb675e35dbaee473, built on Apr 13 2023, at 11:30:45
+* 000000 [Engine] Platform: Mac OS X
+- 000000 [Engine] Game Dir: /Users/marcheiligers/Projects/DRGTK/simple_bounce
+- 000000 [Engine] Game ID: simple_bounce
+- 000000 [Engine] Game Title: simple_bounce
+- 000000 [Engine] Game Version: 0.1.0
+- 000000 [Engine] Game Package ID: org.todo-change-me.simple_bounce
+- 000000 [Engine] Game Developer ID: todo-change-me
+- 000000 [Engine] Game Developer Title: My Name &lt;todo@example.com&gt;
+- 000000 [Engine] Production Build: no
+- 000000 [Engine] Remote Hotload: no
+- 000000 [Render] SDL video backend: cocoa
+- 000000 [Render] SDL renderer backend: metal
+- 000000 [Render] Window size: 1280x720 (requested 1280x720)
+- 000000 [Render] Fullscreen Desktop mode: no
+- 000000 [Render] Allow HighDPI: no
+- 000000 [Render] Max texture size: 16384x16384 (system reported 16384x16384)
+- 000000 [Render] Logical render size: 1280x720
+? 000000 [Engine] RNG seed has been set to 1684371292.
+- 000000 [Engine] Janitor is using 4 threads.
+? 000000 [Engine] Marked app/main.rb for reload. (-1)
+? 000067 [Engine] Marked lib/circle.rb for reload. (4019)
+- 000864 [Game] * EXCEPTION:
+** Failed to reload app/main.rb.
+line 114:0: syntax error, unexpected end of file, expecting keyword_end
+
+
+
+** Backtrace:
+*** lib/circle.rb:1 (51839)
+- 000864 [Game] 
+- 000864 [Game] * WARNING: BouncingShape::Segment does not support serialization. Returning nil.
+Please override the :serialize method and return a hash so that
+Class can be persisted to disk in the event of an exception.
+Here is an example of what you need to do:
+#+begin_src ruby
+class BouncingShape::Segment
+  # 1. Create a serialize method that returns a hash with all of
+  #    the values you care about.
+  def serialize
+    { }
+  end
+
+  # 2. Override the inspect method and return ~serialize.to_s~.
+  def inspect
+    serialize.to_s
+  end
+
+  # 3. Override to_s and return ~serialize.to_s~.
+  def to_s
+    serialize.to_s
+  end
+end
+#+end_src
+- 000864 [Game] 
+- 000864 [Game] [Message ID: []]
+- 000864 [Game] 
+- 000874 [Game] -> $gtk.reset seed: 1684371292
+? 000874 [Engine] RNG seed has been set to 1684371292.
+- 000874 [Game] => 0
+- 000905 [Game] * EXCEPTION:
+** Failed to reload app/main.rb.
+line 64:30: syntax error, unexpected '=', expecting keyword_end
+line 114:0: syntax error, unexpected end of file, expecting keyword_end
+
+
+
+** Backtrace:
+*** lib/circle.rb:1 (54299)
+- 000910 [Game] -> $gtk.reset seed: 1684371292
+? 000910 [Engine] RNG seed has been set to 1684371292.
+- 000910 [Game] => 0
+- 000919 [Game] * EXCEPTION:
+** Failed to reload app/main.rb.
+line 64:30: syntax error, unexpected '=', expecting keyword_end
+line 114:0: syntax error, unexpected end of file, expecting keyword_end
+
+
+
+** Backtrace:
+*** lib/circle.rb:1 (55139)
+? 000923 [Engine] Marked app/main.rb for reload. (55379)
+- 000926 [Game] * WARNING:
+Your average framerate dropped below 60 fps for two seconds.
+
+The average FPS was 18.14285714285714.
+
+** How To Disable Warning
+If this warning is getting annoying put the following in your tick method:
+
+#+begin_src
+  args.gtk.log_level = :off
+#+end_src
+
+* INFO: Framerate Diagnostics
+You can display these diagnostics using:
+
+#+begin_src
+  def tick args
+    # ....
+
+    # IMPORTANT: Put this at the END of the ~tick~ method.
+    args.outputs.debug << args.gtk.framerate_diagnostics_primitives
+  end
+#+end_src
+
+** Draw Calls: ~<<~ Invocation Perf Counter
+Here is how many times ~args.outputs.PRIMITIVE_ARRAY <<~ was called:
+
+  39 times invoked.
+
+If the number above is high, consider batching primitives so you can lower the invocation of ~<<~. For example.
+
+Instead of:
+
+#+begin_src
+  args.state.enemies.map do |e|
+    e.alpha = 128
+    args.outputs.sprites << e # <-- ~args.outputs.sprites <<~ is invoked a lot
+  end
+#+end_src
+
+Do this:
+
+#+begin_src
+  args.outputs.sprites << args.state
+                              .enemies
+                              .map do |e| # <-- ~args.outputs.sprites <<~ is only invoked once.
+    e.alpha = 128
+    e
+  end
+#+end_src
+
+** Array Primitives
+~Primitives~ represented as an ~Array~ (~Tuple~) are great for prototyping, but are not as performant as using a ~Hash~.
+
+Here is the number of ~Array~ primitives that were encountered:
+
+  39 Array Primitives.
+
+If the number above is high, consider converting them to hashes. For example.
+
+Instead of:
+
+#+begin_src
+  args.outputs.sprites << [0, 0, 100, 100, 'sprites/enemy.png']
+#+end_src
+
+Do this:
+
+#+begin_src
+  args.outputs.sprites << { x: 0,
+                            y: 0,
+                            w: 100,
+                            h: 100,
+                            path: 'sprites/enemy.png' }
+#+end_src
+
+We will notify of places where that use Array Primitives if you add the following
+to your ~tick~ method.
+
+#+begin_src
+  def tick args
+    # add the following line to the top of your tick method
+    $gtk.warn_array_primitives!
+  end
+#+end_src
+
+** Primitive Counts
+Here are the draw counts ordered by lowest to highest z order:
+
+PRIMITIVE   COUNT, STATIC COUNT
+solids:     0, 0
+sprites:    0, 0
+primitives: 0, 0
+labels:     0, 0
+lines:      39, 0
+borders:    0, 0
+debug:      0, 0
+reserved:   0, 0
+
+** Additional Help
+Come to the DragonRuby Discord channel if you need help troubleshooting performance issues. http://discord.dragonruby.org.
+
+Source code for these diagnostics can be found at: [[https://github.com/dragonruby/dragonruby-game-toolkit-contrib/]]
+
+
+* 000975 [Engine] Logging shutting down

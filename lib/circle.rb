@@ -1,6 +1,6 @@
 module BouncingShape
   class Circle
-    CIRCLE_DETAIL = 16
+    CIRCLE_DETAIL = 30
 
     attr_reader :center, :radius,
                 :strength,
@@ -104,7 +104,7 @@ module BouncingShape
         args.outputs.lines << [ @intersection[:at][0],
                                 @intersection[:at][1],
                                 @intersection[:at][0] + 40 * @normal[0],
-                                @intersection[:at][1] + 40 * @normal[1] ] + @color 
+                                @intersection[:at][1] + 40 * @normal[1] ] + @color
 
        # # Reflection :
        args.outputs.lines << [ @intersection[:at][0],

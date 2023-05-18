@@ -1,0 +1,6 @@
+$gtk.reset seed: 1684371292
+$gtl.reset
+$gtl.restart
+$gtk.reset
+$gtk.reset seed: 1684371292
+$gtk.reset seed: 1684371292

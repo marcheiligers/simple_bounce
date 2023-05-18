@@ -1,0 +1,4 @@
+-> $gtk.reset seed: 1684371292
+=> 0
+-> $gtk.reset seed: 1684371292
+=> 0
